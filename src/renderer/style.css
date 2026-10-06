@@ -1,0 +1,849 @@
+/*
+ * Port Garden — WebSeal design system (C:\Users\slooshied\WebstormProjects\webseal\STYLE_GUIDE.md).
+ *
+ * "New York dense. shadcn zinc. Restraint over decoration."
+ *
+ * Token values, the type scale, control heights, the radius scale and the
+ * component grammar below are taken from that guide rather than invented here.
+ * Where the guide and this file disagree, one of them is stale and both should
+ * be fixed in the same change.
+ *
+ * The four rules that most shaped this file:
+ *
+ *   1. §1.7 Anti-monospace. Monospace appears only inside real multi-line code
+ *      blocks (`pre`, `kbd`). Ports, pids, addresses, byte counts and metrics
+ *      are the sans UI face with `tabular-nums`. Hierarchy comes from the weight
+ *      ladder, not from switching to a "technical" font.
+ *   2. §1.2 Density from small precise type and hairlines, never from cramming.
+ *   3. §3.4 Tinted fills, not borders. Chips and badges are borderless fills.
+ *   4. §6.2 Hairlines first. Structure is 1px `--border`; panels get no shadow.
+ *
+ * Light is the default and follows the guide's palette exactly. A dark block is
+ * retained under `[data-theme='dark']` because the product brief for this app
+ * asked for a dark mode; the guide specifies light only for WebSeal surfaces.
+ * Nothing else in the file branches on theme.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* §3.2 Core tokens, oklch. */
+  --background: oklch(0.985 0 0);
+  --foreground: oklch(0.141 0.005 285.823);
+  --card: oklch(1 0 0);
+  --popover: oklch(1 0 0);
+  --primary: oklch(0.21 0.006 285.885);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.967 0.001 286.375);
+  --muted: oklch(0.967 0.001 286.375);
+  --accent: oklch(0.967 0.001 286.375);
+  --muted-foreground: oklch(0.552 0.016 285.938);
+  --subtle: oklch(0.705 0.015 286.067);
+  --border: oklch(0.92 0.004 286.32);
+  --input: oklch(0.92 0.004 286.32);
+  --ring: oklch(0.705 0.015 286.067);
+  --inset: oklch(0.976 0.001 286.375);
+  --success: oklch(0.527 0.154 150.069);
+  --warning: oklch(0.555 0.163 48.998);
+  --danger: oklch(0.577 0.245 27.325);
+  --destructive: oklch(0.577 0.245 27.325);
+
+  /* §6.1 Radius scale. Base 0.5rem; named steps below it. */
+  --radius: 0.5rem;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  /* §6.3 Elevation. Three levels, and panels are not one of them. */
+  --shadow-float: 0 1px 2px oklch(0 0 0 / 0.04), 0 4px 12px -4px oklch(0 0 0 / 0.06);
+  --shadow-dialog: 0 0 0 1px oklch(0 0 0 / 0.06), 0 24px 64px -16px oklch(0 0 0 / 0.28);
+
+  /* §5.2 Control heights. */
+  --h-badge: 18px;
+  --h-control-sm: 28px;
+  --h-control: 32px;
+  --h-control-lg: 36px;
+
+  /* §5.1 Base unit 4px; the half steps are where the density lives. */
+  --gap-1: 4px;
+  --gap-2: 6px;
+  --gap-3: 8px;
+  --gap-4: 12px;
+  --gap-5: 16px;
+
+  --titlebar-h: 36px;
+  --sidebar-w: 188px;
+
+  /* §4.1 Families, verbatim. */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter Variable", Inter, "Segoe UI Variable Text", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, "JetBrains Mono", "Cascadia Code", Menlo, Consolas, monospace;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --background: oklch(0.141 0.005 285.823);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.21 0.006 285.885);
+  --popover: oklch(0.21 0.006 285.885);
+  --primary: oklch(0.92 0.004 286.32);
+  --primary-foreground: oklch(0.21 0.006 285.885);
+  --secondary: oklch(0.274 0.006 286.033);
+  --muted: oklch(0.274 0.006 286.033);
+  --accent: oklch(0.274 0.006 286.033);
+  --muted-foreground: oklch(0.705 0.015 286.067);
+  --subtle: oklch(0.552 0.016 285.938);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 16%);
+  --ring: oklch(0.552 0.016 285.938);
+  --inset: oklch(0.185 0.006 285.9);
+  --success: oklch(0.72 0.15 150.069);
+  --warning: oklch(0.79 0.16 76);
+  --danger: oklch(0.704 0.191 22.216);
+  --destructive: oklch(0.704 0.191 22.216);
+}
+
+* { box-sizing: border-box; min-width: 0; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  overflow: hidden;
+  user-select: none;
+  font-family: var(--font-sans);
+  /* §4.2 Body / UI: 14px, weight 400, tracking 0. */
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  /* §4.4 tabular figures on anything numeric. In a table that re-renders every
+     few seconds, proportional digits make every column jitter. */
+  font-variant-numeric: tabular-nums;
+}
+
+/* §1.7 Mono is opt-in and limited to real code. */
+pre, pre code, .code-block { font-family: var(--font-mono); font-feature-settings: "liga" 0, "calt" 0; }
+
+/* Text the user may genuinely need to copy: paths, command lines, ids. */
+.selectable, input, textarea, pre { user-select: text; }
+
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: none; padding: 0; }
+
+/* §15 Visible focus: 2px ring; controls use a 3px ring at 40%. */
+:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; border-radius: var(--radius-sm); }
+::selection { background: color-mix(in oklab, var(--foreground) 14%, transparent); }
+
+/* ------------------------------------------------------- §12 overlay scrollbars */
+
+/*
+ * Native scrollbars are replaced by a floating thumb: a 5px pill in a 12px hit
+ * area, foreground at 22%, widening and darkening on hover or drag, fading in on
+ * scroll and out once idle.
+ *
+ * The scrolling itself stays native - wheel, trackpad, keyboard, focus and
+ * `scrollIntoView` all keep working - and only the indicator is redrawn. Nothing
+ * animates `scrollTop` on a timer, so momentum is never hijacked.
+ */
+.scrollview { position: relative; min-height: 0; overflow: hidden; }
+.scrollview-viewport {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollview-both .scrollview-viewport { overflow-x: auto; }
+.scrollview-viewport::-webkit-scrollbar { width: 0; height: 0; display: none; }
+
+.scrollview-track {
+  position: absolute;
+  z-index: 3;
+  opacity: 0;
+  transition: opacity 180ms ease;
+  touch-action: none;
+}
+.scrollview-track-y { top: 4px; bottom: 4px; right: 2px; width: 12px; }
+.scrollview-track-x { left: 4px; right: 14px; bottom: 2px; height: 12px; }
+
+/* The thumb is inset 3.5px inside its 12px track, giving a 5px pill. */
+.scrollview-thumb {
+  position: absolute;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--foreground) 22%, transparent);
+  transition: background-color 150ms ease, width 120ms ease, height 120ms ease;
+}
+.scrollview-track-y .scrollview-thumb { left: 3.5px; width: 5px; top: 0; }
+.scrollview-track-x .scrollview-thumb { top: 3.5px; height: 5px; left: 0; }
+
+.scrollview:hover .scrollview-track,
+.scrollview.is-scrolling .scrollview-track,
+.scrollview.is-dragging .scrollview-track { opacity: 1; }
+.scrollview-track:hover .scrollview-thumb,
+.scrollview.is-dragging .scrollview-thumb {
+  background: color-mix(in oklab, var(--foreground) 40%, transparent);
+}
+.scrollview-track-y:hover .scrollview-thumb,
+.scrollview.is-dragging .scrollview-track-y .scrollview-thumb { left: 2.5px; width: 7px; }
+.scrollview-track-x:hover .scrollview-thumb,
+.scrollview.is-dragging .scrollview-track-x .scrollview-thumb { top: 2.5px; height: 7px; }
+
+/* No overflow means no thumb: a full-height pill would be a lie. */
+.scrollview.no-overflow-y .scrollview-track-y { display: none; }
+.scrollview.no-overflow-x .scrollview-track-x { display: none; }
+
+/* ------------------------------------------------------------------ app shell */
+
+#app { height: 100%; }
+
+/*
+ * The outermost grid needs an explicit column too.
+ *
+ * Its implicit column is `auto`, which resolves to max-content - so the 1080px
+ * table three levels down sized `.body` to 1268px, and the shell was wider than
+ * the window with everything past the right edge clipped. Each of the nested
+ * grids declares the same minmax(0, 1fr) for the same reason.
+ */
+.app {
+  height: 100%;
+  display: grid;
+  grid-template-rows: var(--titlebar-h) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* --- titlebar: §7 `.titlebar` is h-9, hairline bottom, bg-inset --- */
+
+.titlebar {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-3);
+  padding: 0 var(--gap-3);
+  border-bottom: 1px solid var(--border);
+  background: var(--inset);
+  -webkit-app-region: drag;
+}
+.titlebar > * { -webkit-app-region: no-drag; }
+.titlebar .drag-filler { flex: 1; height: 100%; -webkit-app-region: drag; }
+
+.brand { display: flex; align-items: center; gap: var(--gap-2); padding-left: 2px; }
+.brand .mark {
+  width: 20px; height: 20px; flex: none;
+  display: grid; place-items: center;
+  border-radius: var(--radius-md);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 10px; font-weight: 600; letter-spacing: -0.03em;
+}
+.brand .title { font-size: 13px; font-weight: 550; letter-spacing: -0.005em; }
+
+/*
+ * §8.7 Status language: a word plus a color, never color alone. The administrator
+ * badge is deliberately the warning tone and always visible while elevated.
+ */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  height: var(--h-badge); padding: 0 7px;
+  border-radius: var(--radius-sm);
+  /* §3.4 borderless tinted fill, §8.2 11px/550. */
+  background: color-mix(in oklab, var(--foreground) 5.5%, transparent);
+  color: var(--muted-foreground);
+  font-size: 11px; font-weight: 550; letter-spacing: 0.005em;
+  white-space: nowrap;
+}
+.badge.admin { background: color-mix(in oklab, var(--warning) 14%, transparent); color: var(--warning); }
+.badge.success { background: color-mix(in oklab, var(--success) 12%, transparent); color: var(--success); }
+.badge.warning { background: color-mix(in oklab, var(--warning) 14%, transparent); color: var(--warning); }
+.badge.danger { background: color-mix(in oklab, var(--danger) 12%, transparent); color: var(--danger); }
+.badge.solid { background: color-mix(in oklab, var(--foreground) 8%, transparent); color: var(--foreground); }
+
+/* The titlebar's status pill: a dot plus a short sentence. */
+.status-pill {
+  display: flex; align-items: center; gap: var(--gap-2);
+  height: 24px; padding: 0 10px 0 8px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--foreground) 4.5%, transparent);
+  color: var(--muted-foreground);
+  font-size: 11.5px; font-weight: 450;
+  max-width: 52ch;
+}
+.status-pill .label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* §3.5 Status dots: 6px with a 3px halo at 16%. */
+.dot { width: 6px; height: 6px; border-radius: 999px; flex: none; background: var(--subtle); }
+.dot.ok { background: var(--success); box-shadow: 0 0 0 3px color-mix(in oklab, var(--success) 16%, transparent); }
+.dot.busy { background: var(--warning); box-shadow: 0 0 0 3px color-mix(in oklab, var(--warning) 16%, transparent); animation: pulse 1.4s ease-in-out infinite; }
+.dot.error { background: var(--danger); box-shadow: 0 0 0 3px color-mix(in oklab, var(--danger) 16%, transparent); }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* --- body --- */
+
+.body { display: grid; grid-template-columns: var(--sidebar-w) minmax(0, 1fr); min-height: 0; }
+
+.sidebar {
+  border-right: 1px solid var(--border);
+  background: var(--card);
+  padding: var(--gap-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-4);
+  min-height: 0;
+}
+
+/* §13.2 Sidebar grammar: 13.5px/450 at foreground/72, active gets an overlay
+   fill and weight 550. No left accent bars. */
+.nav { display: grid; gap: 1px; }
+.nav-label {
+  /* §4.2 `.eyebrow`: 10.5px, 600, +0.055em, uppercase. */
+  font-size: 10.5px; font-weight: 600; letter-spacing: 0.055em; text-transform: uppercase;
+  color: color-mix(in oklab, var(--muted-foreground) 80%, transparent);
+  padding: var(--gap-2) var(--gap-2) var(--gap-1);
+}
+.nav-item {
+  display: flex; align-items: center; gap: var(--gap-3);
+  height: 32px; padding: 0 var(--gap-2);
+  border-radius: var(--radius-md);
+  font-size: 13.5px; font-weight: 450;
+  color: color-mix(in oklab, var(--foreground) 72%, transparent);
+  text-align: left; width: 100%;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+.nav-item:hover { background: color-mix(in oklab, var(--foreground) 4%, transparent); color: var(--foreground); }
+.nav-item[aria-current='page'] {
+  background: color-mix(in oklab, var(--foreground) 6%, transparent);
+  color: var(--foreground);
+  font-weight: 550;
+}
+.nav-item .icon { flex: none; opacity: 0.6; }
+.nav-item:hover .icon, .nav-item[aria-current='page'] .icon { opacity: 1; }
+.nav-item .count {
+  margin-left: auto; font-size: 11px; font-weight: 550;
+  color: var(--muted-foreground);
+  background: color-mix(in oklab, var(--foreground) 5.5%, transparent);
+  border-radius: var(--radius-sm); padding: 1px 6px; min-width: 20px; text-align: center;
+}
+
+.sidebar-foot { margin-top: auto; display: grid; gap: var(--gap-2); }
+
+.main { min-height: 0; display: flex; flex-direction: column; }
+/*
+ * Each view fills the content area and scrolls internally rather than the page
+ * scrolling: a table that scrolls the whole window takes the toolbar and the
+ * stat strip with it.
+ */
+.view {
+  flex: 1;
+  min-height: 0;
+  padding: var(--gap-4) var(--gap-5);
+  display: grid;
+  /*
+   * An explicit minmax(0, 1fr) column. Without it the implicit column is
+   * `auto`, which resolves to the widest child's max-content width - so the
+   * 1080px minimum table pushed the whole view wider than the window and the
+   * right-hand columns and stat cards were simply cut off.
+   */
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--gap-3);
+  align-content: start;
+  overflow-y: auto;
+}
+/* The Ports view is a single panel that fills the height, so its table scrolls
+   inside the panel instead of the panel growing and the page scrolling. */
+.view.ports-view { grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; align-content: stretch; }
+.view-title { font-size: 16px; font-weight: 600; letter-spacing: -0.012em; text-wrap: balance; }
+.view-copy { color: var(--muted-foreground); font-size: 13px; margin-top: 3px; max-width: 72ch; line-height: 1.55; text-wrap: pretty; }
+.view-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--gap-4); }
+
+/* ---------------------------------------------------------- §7 `.panel` */
+
+/* A panel is `rounded-lg border bg-card` and explicitly no shadow. */
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  overflow: hidden;
+}
+.card-head {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--gap-4);
+  padding: var(--gap-2) var(--gap-4);
+  min-height: 40px;
+  border-bottom: 1px solid var(--border);
+}
+.card-title { font-size: 13px; font-weight: 550; letter-spacing: -0.005em; }
+.card-copy { color: var(--muted-foreground); font-size: 11.5px; font-weight: 450; margin-top: 1px; line-height: 1.5; }
+/*
+ * Every grid container that can hold wide content declares minmax(0, 1fr) columns.
+ *
+ * An implicit grid column is `auto`, which resolves to max-content - so a 1080px
+ * table nested three grids deep forces each of its ancestors wider than the
+ * window, and the right-hand columns and stat cards are simply cut off. `min-width:
+ * 0` on the items is not enough; the *track* has to be told it may shrink.
+ */
+.card-body { padding: var(--gap-4); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-3); }
+.card-body.flush { padding: 0; }
+.card-foot {
+  padding: var(--gap-2) var(--gap-4);
+  border-top: 1px solid var(--border);
+  background: var(--inset);
+  font-size: 11.5px; font-weight: 450; color: var(--muted-foreground); line-height: 1.5;
+}
+.card-foot[hidden] { display: none; }
+
+/* -------------------------------------------------------- §8.1 Buttons */
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--gap-2);
+  height: var(--h-control); padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: var(--card);
+  border-color: var(--border);
+  color: var(--foreground);
+  font-size: 13px; font-weight: 500; white-space: nowrap;
+  box-shadow: 0 1px 2px oklch(0 0 0 / 0.03);
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+.btn:hover:not(:disabled) { background: var(--accent); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn.primary { background: var(--primary); border-color: var(--primary); color: var(--primary-foreground); font-weight: 500; }
+.btn.primary:hover:not(:disabled) { background: color-mix(in oklab, var(--primary) 88%, transparent); }
+.btn.ghost { background: transparent; border-color: transparent; color: var(--muted-foreground); box-shadow: none; }
+.btn.ghost:hover:not(:disabled) { background: color-mix(in oklab, var(--foreground) 5.5%, transparent); color: var(--foreground); }
+/* §8.1 destructive is tinted, never solid red. */
+.btn.danger {
+  background: color-mix(in oklab, var(--danger) 8%, transparent);
+  border-color: color-mix(in oklab, var(--danger) 30%, transparent);
+  color: var(--danger);
+  box-shadow: none;
+}
+.btn.danger:hover:not(:disabled) { background: color-mix(in oklab, var(--danger) 14%, transparent); }
+.btn.icon { width: var(--h-control); padding: 0; }
+.btn.sm { height: var(--h-control-sm); padding: 0 10px; font-size: 12.5px; }
+.btn.icon.sm { width: var(--h-control-sm); }
+
+.input, .select {
+  width: 100%; height: var(--h-control);
+  padding: 0 10px;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-md);
+  background: var(--card);
+  font-size: 13px;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.input::placeholder { color: var(--muted-foreground); }
+.input:focus, .select:focus {
+  outline: none;
+  border-color: color-mix(in oklab, var(--ring) 60%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 40%, transparent);
+}
+.input.search { padding-left: 30px; }
+.select { appearance: none; padding-right: 28px; background-image: linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%), linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%); background-position: right 13px center, right 9px center; background-size: 4px 4px, 4px 4px; background-repeat: no-repeat; }
+
+.field { display: grid; gap: var(--gap-2); }
+.field-label { font-size: 12.5px; font-weight: 500; color: var(--foreground); }
+.field-hint { font-size: 11.5px; font-weight: 450; color: var(--muted-foreground); line-height: 1.5; }
+
+.row { display: flex; align-items: center; gap: var(--gap-2); }
+.row.tight { gap: var(--gap-2); }
+.row.wrap { flex-wrap: wrap; }
+.spacer { flex: 1; }
+
+/* §8.6 Keyboard hints. Sans, tinted, 18px. */
+.kbd {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px; padding: 0 5px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in oklab, var(--foreground) 6%, transparent);
+  font-size: 10.5px; font-weight: 500; color: var(--muted-foreground);
+}
+
+.segmented {
+  display: flex; gap: 1px; padding: 2px;
+  background: color-mix(in oklab, var(--foreground) 5.5%, transparent);
+  border-radius: var(--radius-md);
+}
+.segmented button {
+  height: 24px; padding: 0 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12.5px; font-weight: 450;
+  color: var(--muted-foreground);
+  display: inline-flex; align-items: center; gap: 4px;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+.segmented button:hover { color: var(--foreground); }
+.segmented button[aria-pressed='true'] { background: var(--card); color: var(--foreground); font-weight: 500; box-shadow: 0 1px 2px oklch(0 0 0 / 0.06); }
+.segmented .tally { font-size: 10.5px; opacity: 0.7; }
+
+.switch {
+  appearance: none; flex: none;
+  width: 32px; height: 18px; border-radius: 999px;
+  background: color-mix(in oklab, var(--foreground) 16%, transparent);
+  position: relative; cursor: pointer;
+  transition: background-color 150ms ease;
+}
+.switch::after {
+  content: ''; position: absolute; top: 2px; left: 2px;
+  width: 14px; height: 14px; border-radius: 999px;
+  background: var(--card);
+  box-shadow: 0 1px 2px oklch(0 0 0 / 0.2);
+  transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.switch:checked { background: var(--primary); }
+.switch:checked::after { transform: translateX(14px); }
+.switch:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.checkbox {
+  appearance: none; flex: none;
+  width: 15px; height: 15px; border-radius: var(--radius-sm);
+  border: 1px solid var(--input); background: var(--card);
+  cursor: pointer; position: relative;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+.checkbox:hover { border-color: var(--subtle); }
+.checkbox:checked { background: var(--primary); border-color: var(--primary); }
+.checkbox:checked::after {
+  content: ''; position: absolute; inset: 0;
+  background: var(--primary-foreground);
+  clip-path: polygon(20% 52%, 16% 58%, 40% 80%, 84% 30%, 78% 24%, 40% 68%);
+}
+
+/* ------------------------------------------------------------ §8.3 two-line rows */
+
+.list { display: grid; }
+.list > * + * { border-top: 1px solid var(--border); }
+.item {
+  display: flex; align-items: center; gap: var(--gap-4);
+  min-height: 44px; padding: var(--gap-2) var(--gap-4);
+  transition: background-color 150ms ease;
+}
+.item:hover { background: color-mix(in oklab, var(--foreground) 4%, transparent); }
+.item-main { min-width: 0; flex: 1; display: grid; gap: 1px; }
+.item-title { font-size: 12.5px; font-weight: 520; letter-spacing: -0.005em; overflow-wrap: anywhere; }
+.item-meta { font-size: 11.5px; font-weight: 450; color: var(--muted-foreground); overflow-wrap: anywhere; line-height: 1.45; }
+.item-meta.danger { color: var(--danger); }
+.item-actions { display: flex; align-items: center; gap: var(--gap-2); flex: none; }
+
+/* §8.2 chips: borderless tinted fill, 18px, 11px/550. */
+.chip-list { display: flex; flex-wrap: wrap; gap: var(--gap-2); }
+.chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  height: var(--h-badge); padding: 0 4px 0 8px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in oklab, var(--foreground) 5.5%, transparent);
+  font-size: 11px; font-weight: 550;
+}
+.chip button { display: grid; place-items: center; color: var(--muted-foreground); border-radius: var(--radius-sm); width: 14px; height: 14px; }
+.chip button:hover { background: color-mix(in oklab, var(--foreground) 8%, transparent); color: var(--foreground); }
+
+.facts { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 5px var(--gap-4); align-items: baseline; }
+.facts dt { font-size: 11.5px; font-weight: 450; color: var(--muted-foreground); white-space: nowrap; }
+.facts dd { margin: 0; font-size: 12.5px; font-weight: 450; overflow-wrap: anywhere; }
+
+.stat { display: grid; gap: 1px; padding: var(--gap-3) var(--gap-4); }
+.stat .stat-value { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; }
+.stat .stat-label { font-size: 11.5px; font-weight: 450; color: var(--muted-foreground); }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
+.stats > * + * { border-left: 1px solid var(--border); }
+.stat { min-width: 0; }
+
+.empty { padding: var(--gap-5); text-align: center; color: var(--muted-foreground); font-size: 13px; line-height: 1.6; text-wrap: pretty; }
+.empty .empty-title { color: var(--foreground); font-size: 14px; font-weight: 550; margin-bottom: 3px; }
+
+/* ---------------------------------------------------------- §8.4 tables */
+
+/*
+ * A real table, styled as table cells.
+ *
+ * The first version laid the row out as a CSS grid while the view rendered
+ * `<tr>`/`<td>`. A `tr` cannot be a grid container, so the column definitions
+ * were silently ignored: the header and body drifted apart, two-line cells
+ * overflowed the fixed row height and printed over their neighbours, and the
+ * action buttons were clipped off the right edge. Widths now come from a
+ * `<colgroup>`, which is what actually aligns a table's columns.
+ *
+ * `min-width` keeps the columns legible instead of crushing them: below it the
+ * ScrollView scrolls horizontally rather than squeezing the process name to
+ * three characters.
+ */
+.port-panel { display: grid; grid-template-rows: auto minmax(0, 1fr); grid-template-columns: minmax(0, 1fr); min-height: 0; }
+.table-host { display: grid; grid-template-columns: minmax(0, 1fr); min-height: 0; padding: 0; }
+.table-scroll { min-height: 0; }
+
+.ptable { width: 100%; min-width: 880px; table-layout: fixed; border-collapse: separate; border-spacing: 0; }
+
+/* §8.4 heads use bg-inset and `.eyebrow`. */
+.ptable thead th {
+  position: sticky; top: 0; z-index: 2;
+  background: var(--inset);
+  border-bottom: 1px solid var(--border);
+  padding: var(--gap-2) var(--gap-4);
+  text-align: left;
+  font-size: 10.5px; font-weight: 600; letter-spacing: 0.055em; text-transform: uppercase;
+  color: color-mix(in oklab, var(--muted-foreground) 80%, transparent);
+  white-space: nowrap;
+}
+.ptable thead th.sortable { cursor: pointer; transition: color 150ms ease; }
+.ptable thead th.sortable:hover { color: var(--foreground); }
+.ptable thead th .sort-caret { margin-left: 4px; }
+
+.ptable tbody td {
+  /* §8.4 cells px-4 py-3. */
+  padding: var(--gap-2) var(--gap-4);
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ptable tbody tr:last-child td { border-bottom: none; }
+/* Selection and hover are overlay fills, never a border or a left bar (§8.3). */
+.ptable tbody tr:hover td { background: var(--inset); }
+.ptable tbody tr[data-selected='true'] td { background: color-mix(in oklab, var(--foreground) 6%, transparent); }
+
+.cell-stack { display: grid; gap: 0; min-width: 0; }
+.cell-main { font-size: 12.5px; font-weight: 520; letter-spacing: -0.005em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cell-sub { font-size: 11.5px; font-weight: 450; color: var(--muted-foreground); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/*
+ * §1.7. The port, the pid and the byte counts are sans with tabular figures -
+ * not monospace. The first version set them in mono, which reads as a terminal
+ * rather than as a calibrated product surface, and it is the single change that
+ * most alters how this table feels.
+ */
+.cell-port { font-size: 13.5px; font-weight: 550; }
+/* The port number and its HTML marker share one line, so a row that has been
+   identified is the same height as one that has not. */
+.cell-port .cell-main { display: flex; align-items: center; gap: 5px; }
+.cell-port-num { font-variant-numeric: tabular-nums; }
+/* Marks a port that answered with HTML. The tooltip carries the page title, so
+   the marker itself stays a wordless icon. */
+.cell-flag { display: inline-flex; align-items: center; flex: none; color: var(--success); }
+.cell-num { font-size: 12.5px; font-weight: 450; color: var(--muted-foreground); }
+.cell-main.muted-inline { color: var(--muted-foreground); font-weight: 450; }
+
+.cell-actions { padding-right: var(--gap-3); }
+.row-actions { display: flex; align-items: center; justify-content: flex-end; gap: 2px; }
+.row-actions .btn.icon { width: var(--h-control-sm); height: var(--h-control-sm); }
+.row-actions .btn.ghost { color: var(--muted-foreground); }
+.row-actions .btn.ghost:hover { color: var(--foreground); }
+
+/* --- expanded row: the evidence behind every judgement the row made --- */
+
+.pdetail-row td { padding: 0; border-bottom: 1px solid var(--border); }
+.pdetail {
+  padding: var(--gap-4);
+  background: var(--inset);
+  white-space: normal;
+}
+.pdetail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--gap-5); }
+.pdetail-section { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-3); }
+.pdetail-heading { font-size: 12.5px; font-weight: 550; letter-spacing: -0.005em; }
+/* §8.5 a real multi-line code block: the one place mono is correct. */
+.pdetail-cmd {
+  margin: 0;
+  padding: var(--gap-3);
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 0 0 1px var(--border);
+  background: var(--card);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: color-mix(in oklab, var(--foreground) 88%, var(--muted-foreground));
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  user-select: text;
+  max-height: 132px;
+  overflow: auto;
+}
+.pdetail-note {
+  display: flex; align-items: flex-start; gap: var(--gap-2);
+  margin-bottom: var(--gap-3);
+  font-size: 12.5px; line-height: 1.55;
+  color: var(--muted-foreground);
+  white-space: normal;
+  text-wrap: pretty;
+}
+.pdetail-note .icon { flex: none; margin-top: 2px; color: var(--warning); }
+.pdetail-note .icon.info { color: var(--muted-foreground); }
+.pdetail-actions { display: flex; gap: var(--gap-2); flex-wrap: wrap; }
+
+/* ----------------------------------------------------------- §8.11 service panel */
+
+/*
+ * A 16:9 well so the layout does not jump between "capturing" and "captured", and
+ * so a wide screenshot is not silently cropped by a flex row.
+ */
+.service-status { display: flex; align-items: center; gap: var(--gap-2); flex-wrap: wrap; }
+.service-preview { display: grid; gap: var(--gap-2); }
+.service-shot {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: top left;
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 0 0 1px var(--border);
+  background: var(--inset);
+  cursor: default;
+}
+
+/* ------------------------------------------------------------------- toolbar */
+
+.toolbar {
+  display: flex; align-items: center; gap: var(--gap-2);
+  padding: var(--gap-2) var(--gap-3);
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+  flex: none;
+}
+.toolbar .search-wrap { position: relative; flex: 1; max-width: 340px; }
+.toolbar .search-wrap .icon { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: var(--muted-foreground); pointer-events: none; }
+.toolbar .input { height: var(--h-control-sm); font-size: 12.5px; }
+
+/* Bulk action bar: only present with a selection, and it states the count. */
+.bulkbar {
+  display: flex; align-items: center; gap: var(--gap-3);
+  padding: var(--gap-2) var(--gap-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  box-shadow: var(--shadow-float);
+  font-size: 13px; font-weight: 450;
+}
+.bulkbar[hidden] { display: none; }
+
+/* ------------------------------------------------------- reserved-port hint */
+
+.reserved-note {
+  display: flex; align-items: flex-start; gap: var(--gap-3);
+  padding: var(--gap-4);
+  font-size: 13px; line-height: 1.55;
+  color: var(--muted-foreground);
+  text-wrap: pretty;
+}
+.reserved-note .icon { flex: none; margin-top: 2px; color: var(--warning); }
+.reserved-note strong { color: var(--foreground); font-weight: 550; }
+
+/* ------------------------------------------------------------------- history */
+
+.hist { display: grid; }
+.hist-row {
+  display: grid; grid-template-columns: 60px 92px 64px minmax(0, 1fr) 92px;
+  gap: var(--gap-3); align-items: baseline;
+  min-height: 30px; padding: 0 var(--gap-4);
+  font-size: 12.5px;
+}
+.hist-row + .hist-row { border-top: 1px solid var(--border); }
+.hist-row .hist-port { font-weight: 550; }
+.hist-row .hist-when { color: var(--muted-foreground); font-size: 11.5px; }
+.hist-row .hist-pid { color: var(--muted-foreground); font-size: 11.5px; }
+.hist-row .hist-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hist-row .hist-reason { color: var(--muted-foreground); font-size: 11.5px; text-align: right; }
+
+/* ------------------------------------------------------------------ settings */
+
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: var(--gap-3); align-items: start; }
+
+.rangetable { display: grid; font-size: 12.5px; }
+.rangetable .range-row { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: var(--gap-3); align-items: baseline; min-height: 28px; padding: 0 var(--gap-4); }
+.rangetable .range-row + .range-row { border-top: 1px solid var(--border); }
+.rangetable .range-row:nth-child(odd) { background: color-mix(in oklab, var(--foreground) 2.5%, transparent); }
+.rangetable .range-port { font-weight: 500; }
+
+.diag-log {
+  margin: 0;
+  padding: var(--gap-3);
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 0 0 1px var(--border);
+  background: var(--inset);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: color-mix(in oklab, var(--foreground) 88%, var(--muted-foreground));
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 200px;
+  overflow: auto;
+}
+
+/* ------------------------------------------------------------------- toasts */
+
+.toasts { position: fixed; right: var(--gap-4); bottom: var(--gap-4); z-index: 60; display: grid; gap: var(--gap-2); justify-items: end; }
+.toast {
+  display: flex; align-items: flex-start; gap: var(--gap-3);
+  max-width: 460px; padding: var(--gap-3) var(--gap-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--popover);
+  box-shadow: var(--shadow-float);
+  font-size: 13px; line-height: 1.5;
+  text-wrap: pretty;
+  animation: toast-in 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.toast .icon { flex: none; margin-top: 2px; color: var(--success); }
+.toast.error .icon { color: var(--danger); }
+.toast .toast-text { overflow-wrap: anywhere; }
+@keyframes toast-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* --------------------------------------------------------- command menu §8.10 */
+
+.overlay {
+  position: fixed; inset: 0; z-index: 50;
+  background: oklch(0 0 0 / 0.25);
+  backdrop-filter: blur(2px);
+  display: grid; align-items: start; justify-items: center;
+  padding-top: 12vh;
+  animation: overlay-in 150ms ease;
+}
+@keyframes overlay-in { from { opacity: 0; } to { opacity: 1; } }
+
+.command {
+  width: min(600px, calc(100vw - 48px));
+  border-radius: var(--radius-xl);
+  background: var(--popover);
+  box-shadow: var(--shadow-dialog);
+  overflow: hidden;
+  animation: command-in 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes command-in { from { opacity: 0; transform: translateY(-6px) scale(0.985); } to { opacity: 1; transform: none; } }
+
+.command-input {
+  width: 100%; height: 48px; padding: 0 var(--gap-4);
+  border: none; border-bottom: 1px solid var(--border);
+  background: transparent;
+  font-size: 14px;
+}
+.command-input::placeholder { color: var(--muted-foreground); }
+.command-input:focus { outline: none; }
+.command-list { max-height: 340px; padding: var(--gap-1); }
+.command-item {
+  display: flex; align-items: center; gap: var(--gap-3);
+  width: 100%; min-height: 40px; padding: 0 var(--gap-3);
+  border-radius: var(--radius-md);
+  font-size: 13.5px; font-weight: 450;
+  text-align: left;
+  color: var(--foreground);
+}
+.command-item .icon { color: var(--muted-foreground); flex: none; opacity: 0.6; }
+.command-item[data-active='true'] { background: color-mix(in oklab, var(--foreground) 6%, transparent); }
+.command-item[data-active='true'] .icon { opacity: 1; color: var(--foreground); }
+.command-item .hint { margin-left: auto; font-size: 11.5px; color: var(--muted-foreground); }
+.log-empty { padding: var(--gap-4); color: var(--muted-foreground); font-size: 13px; }
+
+/* ------------------------------------------------------------------ responsive */
+
+@media (max-width: 1100px) {
+  .body { grid-template-columns: 60px minmax(0, 1fr); }
+  .nav-item .label, .nav-label, .nav-item .kbd, .sidebar-foot .btn .label { display: none; }
+  .nav-item { justify-content: center; padding: 0; }
+  .nav-item .count { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}

@@ -1,0 +1,65 @@
+name: verify
+
+# Port Garden is Windows-only, and the probe scripts read PowerShell and the WMI
+# TCP class that only exist there, so there is no meaningful Linux or macOS job to
+# run. `windows-latest` is the target, not a convenience.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: typecheck · test · build
+    runs-on: windows-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      # The probe scripts are the part most likely to break on a machine that is
+      # not the maintainer's, and they are also the part a normal build would
+      # never exercise. This runs the real fast tier against the runner and fails
+      # if it returns no listening sockets or a parse error.
+      - name: Smoke the probe scripts against the runner
+        shell: pwsh
+        run: |
+          $records = & pwsh -NoProfile -NonInteractive -ExecutionPolicy Bypass -File resources/probe/fast.ps1
+          $errors = @($records | Where-Object { $_ -match '"k":"e"' })
+          if ($errors.Count -gt 0) {
+            Write-Output "probe reported errors:"
+            $errors | ForEach-Object { Write-Output "  $_" }
+            exit 1
+          }
+          $meta = $records | Where-Object { $_ -match '"k":"m"' } | Select-Object -First 1
+          if (-not $meta) { Write-Output 'probe emitted no meta record'; exit 1 }
+          Write-Output "probe ok: $meta"
+          # A runner with nothing listening would make the assertion vacuous, so
+          # the job states what it actually saw.
+          $bindings = @($records | Where-Object { $_ -match '"k":"tb"' })
+          if ($bindings.Count -eq 0) { Write-Output 'probe emitted no binding record'; exit 1 }

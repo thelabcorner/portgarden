@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <!--
+      The documentation demo: the real views against fictional data, used for the
+      README screenshot. It loads no remote content and talks to nothing; the
+      bridge is stubbed in the page. The CSP is injected by
+      `electron.vite.config.ts`, which keeps the production document strict.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'"
+    />
+    <title>Port Garden — interface preview</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/demo.ts"></script>
+  </body>
+</html>
